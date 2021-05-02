@@ -1,7 +1,9 @@
+#Overriding member function em tp_funcionario
 CREATE OR REPLACE TYPE tp_funcionario UNDER tp_pessoa (
     CarteiraTrabalho VARCHAR2(30),
     Salario NUMBER(10),
-    MEMBER PROCEDURE setSalario (s NUMBER)
+    MEMBER PROCEDURE setSalario (s NUMBER),
+		OVERRIDING MEMBER FUNCTION documentoOficial RETURN NUMBER
 ) FINAL;
 /
 CREATE OR REPLACE TYPE BODY tp_funcionario AS 
@@ -9,8 +11,11 @@ FINAL MEMBER PROCEDURE setSalario(s NUMBER) IS
 BEGIN
     salario:=s;
 END;
+MEMBER FUNCTION documentoOficial RETURN INTEGER IS
+BEGIN
+	RETURN SELF.CarteiraTrabalho;
 END;
-/
+END;
 
 ALTER TYPE tp_funcionario ADD ATTRIBUTE (carteiratrabalho_supervisor VARCHAR2(30)) CASCADE;
 

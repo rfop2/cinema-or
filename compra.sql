@@ -17,6 +17,12 @@ END;
 END;
 /
 
+#Uso de SCOPE IS, deixa junto de tp_compra
+
+CREATE TABLE tb_compra OF tp_compra(id PRIMARY KEY, cliente SCOPE IS tb_cliente);
+
+DROP TABLE tb_compra PURGE;
+
 CREATE TABLE tb_compra OF tp_compra(id PRIMARY KEY, cliente WITH ROWID REFERENCES tb_cliente);
 
 INSERT INTO tb_compra VALUES (

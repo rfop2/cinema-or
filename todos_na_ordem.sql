@@ -10,8 +10,17 @@ CREATE OR REPLACE TYPE tp_pessoa AS OBJECT(
 	Cpf INT,
 	Nome VARCHAR2(30),
 	Email  VARCHAR2(30),
-	lista_telefones VA_FONES
+	lista_telefones VA_FONES,
+	MEMBER FUNCTION documentoOficial RETURN NUMBER
 )NOT FINAL NOT INSTANTIABLE;
+/
+
+CREATE OR REPLACE TYPE BODY tp_pessoa AS
+MEMBER FUNCTION documentoOficial RETURN INTEGER IS
+BEGIN
+	RETURN SELF.CarteiraTrabalho;
+END;
+END;
 /
 
 
@@ -98,16 +107,22 @@ END;
 END;
 /
 
+#Overriding member function em tp_funcionario
 CREATE OR REPLACE TYPE tp_funcionario UNDER tp_pessoa (
     CarteiraTrabalho VARCHAR2(30),
     Salario NUMBER(10),
-    MEMBER PROCEDURE setSalario (s NUMBER)
+    MEMBER PROCEDURE setSalario (s NUMBER),
+		OVERRIDING MEMBER FUNCTION documentoOficial RETURN NUMBER
 ) FINAL;
 /
 CREATE OR REPLACE TYPE BODY tp_funcionario AS 
 FINAL MEMBER PROCEDURE setSalario(s NUMBER) IS
 BEGIN
     salario:=s;
+END;
+MEMBER FUNCTION documentoOficial RETURN INTEGER IS
+BEGIN
+	RETURN SELF.CarteiraTrabalho;
 END;
 END;
 /
@@ -141,6 +156,12 @@ RETURN SELF.valor - V.valor;
 END;
 END;
 /
+
+#Uso de SCOPE IS, deixa junto de tp_compra
+
+CREATE TABLE tb_compra OF tp_compra(id PRIMARY KEY, cliente SCOPE IS tb_cliente);
+
+DROP TABLE tb_compra PURGE;
 
 CREATE TABLE tb_compra OF tp_compra(id PRIMARY KEY, cliente WITH ROWID REFERENCES tb_cliente);
 
